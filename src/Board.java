@@ -5,9 +5,11 @@ import java.util.stream.IntStream;
  */
 public class Board {
     private Piece[][] board;
+    private int dimension;
 
-    public Board() {
-        board = new Piece[8][8];
+    public Board(int dimension) {
+        this.dimension = dimension;
+        board = new Piece[dimension][dimension];
     }
 
     public void place(Piece piece) {
@@ -18,7 +20,7 @@ public class Board {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("   ");
-        IntStream.range(1, 9).forEach(i -> stringBuilder.append(i).append(" "));
+        IntStream.range(1, Constants.BOARD_DIMENSION +1).forEach(i -> stringBuilder.append(i).append(" "));
         stringBuilder.append("\n");
         char current = 'A';
         for (Piece[] pieces : board) {
