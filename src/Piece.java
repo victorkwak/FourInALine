@@ -2,22 +2,20 @@
  * Created by Victor Kwak on 11/30/15.
  */
 public abstract class Piece {
-    private int x;
-    private int y;
+    private Position position;
     private char side;
 
-    public Piece(int x, int y, char side) {
-        this.x = x;
-        this.y = y;
+    public Piece(Position position, char side) {
+        this.position = position;
         this.side = side;
     }
 
-    public int getX() {
-        return x;
+    public Position getPosition() {
+        return position;
     }
 
-    public int getY() {
-        return y;
+    public char getSide() {
+        return side;
     }
 
     @Override

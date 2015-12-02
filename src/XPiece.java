@@ -3,7 +3,7 @@
  */
 public class XPiece extends Piece{
 
-    public XPiece(int x, int y) {
-        super(x, y, 'X');
+    public XPiece(Position position) {
+        super(position, 'X');
     }
 }

@@ -21,7 +21,7 @@ public class Board {
     private boolean place(Piece piece) {
         int x = piece.getX();
         int y = piece.getY();
-        if (isOnBoard(x, y) && isNotAlreadyOccuppied(x, y)) {
+        if (isOnBoard(x, y) && isNotAlreadyOccupied(x, y)) {
             board[x][y] = piece;
             merge(piece);
             return true;
@@ -42,12 +42,12 @@ public class Board {
         return x >= 0 && x < dimension && y >= 0 && y < dimension;
     }
 
-    private boolean isNotAlreadyOccuppied(int x, int y) {
+    private boolean isNotAlreadyOccupied(int x, int y) {
         return board[x][y] != null;
     }
 
     private boolean isEmpty(int x, int y) {
-        return board[x][y] != null;
+        return board[x][y] == null;
     }
 
     private void merge(Piece piece) {
