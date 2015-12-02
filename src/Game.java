@@ -5,7 +5,7 @@ public class Game {
     public static void main(String[] args) {
         Board board = new Board(Constants.BOARD_DIMENSION);
         System.out.println(board);
-        board.place(new X(0,0));
+        board.placeX(0,0);
         System.out.println(board);
     }
 }

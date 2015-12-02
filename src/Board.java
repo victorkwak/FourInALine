@@ -12,9 +12,39 @@ public class Board {
         board = new Piece[dimension][dimension];
     }
 
-    public void place(Piece piece) {
-        board[piece.getX()][piece.getY()] = piece;
+    /**
+     * places piece on board, returns whether action was successful
+     * @param piece
+     * @return
+     */
+    private boolean place(Piece piece) {
+        int x = piece.getX();
+        int y = piece.getY();
+        if (isOnBoard(x, y) && isNotAlreadyOccuppied(x, y)) {
+            board[piece.getX()][piece.getY()] = piece;
+            //TODO perform kruskal set merge
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    public boolean placeX(int x, int y) {
+        return place(new XPiece(x, y));
+    }
+
+    public boolean placeY(int x, int y) {
+        return place(new OPiece(x, y));
+    }
+
+    private boolean isOnBoard(int x, int y) {
+        return x >= 0 && x < dimension && y >= 0 && y < dimension;
+    }
+
+    private boolean isNotAlreadyOccuppied(int x, int y) {
+        return board[x][y] != null;
+    }
+
 
     @Override
     public String toString() {
