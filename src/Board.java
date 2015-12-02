@@ -14,6 +14,7 @@ public class Board {
 
     /**
      * places piece on board, returns whether action was successful
+     *
      * @param piece
      * @return
      */
@@ -21,8 +22,8 @@ public class Board {
         int x = piece.getX();
         int y = piece.getY();
         if (isOnBoard(x, y) && isNotAlreadyOccuppied(x, y)) {
-            board[piece.getX()][piece.getY()] = piece;
-            //TODO perform kruskal set merge
+            board[x][y] = piece;
+            merge(piece);
             return true;
         } else {
             return false;
@@ -45,12 +46,44 @@ public class Board {
         return board[x][y] != null;
     }
 
+    private boolean isEmpty(int x, int y) {
+        return board[x][y] != null;
+    }
+
+    private void merge(Piece piece) {
+        int x = piece.getX();
+        int y = piece.getY();
+        //all the way left
+        if (x == 0) {
+            if (!isEmpty(x + 1, y)) {
+
+            }
+        }
+        //all the way right
+        if (x == Constants.BOARD_DIMENSION - 1) {
+            if (!isEmpty(x + 1, y)) {
+
+            }
+        }
+        //all the way top
+        if (y == 0) {
+            if (!isEmpty(x, y + 1)) {
+
+            }
+        }
+        //all the way bottom
+        if (y == Constants.BOARD_DIMENSION - 1) {
+            if (!isEmpty(x, y - 1)) {
+
+            }
+        }
+    }
 
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("   ");
-        IntStream.range(1, Constants.BOARD_DIMENSION +1).forEach(i -> stringBuilder.append(i).append(" "));
+        IntStream.range(1, Constants.BOARD_DIMENSION + 1).forEach(i -> stringBuilder.append(i).append(" "));
         stringBuilder.append("\n");
         char current = 'A';
         for (Piece[] pieces : board) {
