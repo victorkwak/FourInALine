@@ -5,11 +5,11 @@ import java.util.List;
  */
 public interface Threat {
 
-    public List<Position> getCostSquares();
+    List<Position> getCostSquares();
 
-    public Thread getDependentOn();
+    Threat getDependentOn(); //TODO Dafuq?
 
-    public Position getGainSquare();
+    Position getGainSquare();
 
-    public List<Position> getRestSquares();
+    List<Position> getRestSquares();
 }
