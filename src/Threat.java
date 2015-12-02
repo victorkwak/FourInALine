@@ -7,7 +7,7 @@ public interface Threat {
 
     List<Position> getCostSquares();
 
-    Threat getDependentOn(); //TODO Dafuq?
+    Threat getDependentOn();
 
     Position getGainSquare();
 

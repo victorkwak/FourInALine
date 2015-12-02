@@ -1,3 +1,7 @@
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -6,6 +10,10 @@ import java.util.stream.IntStream;
 public class Board {
     private Piece[][] board;
     private int dimension;
+    private Map<Integer, Column> columns;
+    private Map<Integer, Row> rows;
+    private List<Threat> threats;
+
 
     public Board(int dimension) {
         this.dimension = dimension;
