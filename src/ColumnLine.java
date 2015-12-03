@@ -10,6 +10,7 @@ public class ColumnLine {
     private Position lowerEnd;
 
     public ColumnLine(Position initialPosition){
+
         includedPositions.add(initialPosition);
         upperEnd = initialPosition;
         lowerEnd = initialPosition;

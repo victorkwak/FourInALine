@@ -12,5 +12,4 @@ public class Constants {
     public static final int LOW = 250;
     public static final double UP_MULTIPLIER = 1.25;
     public static final double DOWN_MULTIPLIER = 0.75;
-
 }

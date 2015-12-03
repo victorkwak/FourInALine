@@ -30,7 +30,12 @@ public class Board {
 
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
-                place(board.board[i][j]);
+                if (board.board[i][j] == null) {
+                    this.board[i][j] = null;
+                } else {
+                    place(board.board[i][j]);
+                }
+
             }
         }
 
@@ -47,7 +52,8 @@ public class Board {
      */
     private boolean place(Piece piece) {
         if (piece == null) {
-            return false;
+            throw new RuntimeException("Adding a null piece!");
+//            return false;
         }
         Position piecePosition = piece.getPosition();
         int row = piecePosition.getRow();
@@ -63,7 +69,8 @@ public class Board {
             merge(piece);
             return true;
         } else {
-            return false;
+            throw new RuntimeException("didn't work wtf");
+//            return false;
         }
     }
 
@@ -189,8 +196,8 @@ public class Board {
     public boolean gameIsOver() {
         int row = lastPlacedPosition.getRow();
         int column = lastPlacedPosition.getColumn();
-        return rowLines[row][column].size() == 4
-                || columnLines[row][column].size() == 4;
+        return rowLines[row][column].size() >= 4
+                || columnLines[row][column].size() >= 4;
     }
 
     @Override
