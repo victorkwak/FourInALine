@@ -20,6 +20,7 @@ public class Game {
 
         System.out.print("Is computer going first? (y/n) ");
         String response = scanner.nextLine().toLowerCase();
+
         System.out.println("Initial board: ");
         System.out.println(board);
 
@@ -88,7 +89,6 @@ public class Game {
             }
             alpha = Math.max(alpha, utility);
         }
-        System.out.println(++counter);
         return new IntBoard(resultBoard, utility);
     }
 
@@ -114,7 +114,6 @@ public class Game {
             }
             beta = Math.min(beta, utility);
         }
-        System.out.println(++counter);
         return utility;
     }
 
