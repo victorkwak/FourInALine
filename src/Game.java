@@ -48,7 +48,9 @@ public class Game {
     public static Board minimax(Board initialBoard, int depth) {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
-        return max(initialBoard, alpha, beta, depth);
+
+        IntBoard utilityOfBestChild = max(initialBoard, alpha, beta, depth);
+        return utilityOfBestChild.board;
     }
 
     /**
@@ -57,24 +59,27 @@ public class Game {
      *
      * @param board
      */
-    public static Board max(Board board, int alpha, int beta, int depth) {
+    public static IntBoard max(Board board, int alpha, int beta, int depth) {
         if (depth == 0 || board.gameIsOver()) {
             board.setUtility(board.getStaticEvaluation(true));
-            return board;
+            return new IntBoard(board, board.getUtility());
         }
-        board.setUtility(Integer.MIN_VALUE);
         List<Board> children = board.generateChildren(true);
+        int utility = Integer.MIN_VALUE;
+        Board resultBoard = board;
         for (Board child : children) {
-            Board min = min(child, alpha, beta, depth - 1);
-            if (min.getUtility() > board.getUtility()) {
-                board = min;
+            int minResult = min(child, alpha, beta, depth - 1);
+            if (minResult > utility) {
+                utility = minResult;
+                resultBoard = child;
             }
-            if (board.getUtility() >= beta) {
-                return board;
+//            utility = Math.max(utility, minResult);
+            if (utility >= beta) {
+                return new IntBoard(child, utility);
             }
-            alpha = Math.max(alpha, board.getUtility());
+            alpha = Math.max(alpha, utility);
         }
-        return board;
+        return new IntBoard(resultBoard, utility);
     }
 
     //TODO make sure false and true is correct
@@ -84,24 +89,22 @@ public class Game {
      *
      * @param board
      */
-    public static Board min(Board board, int alpha, int beta, int depth) {
+    public static int min(Board board, int alpha, int beta, int depth) {
         if (depth == 0 || board.gameIsOver()) {
             board.setUtility(board.getStaticEvaluation(false));
-            return board;
+            return board.getUtility();
         }
-        board.setUtility(Integer.MAX_VALUE);
         List<Board> children = board.generateChildren(false);
+        int utility = Integer.MAX_VALUE;
         for (Board child : children) {
-            Board max = max(child, alpha, beta, depth - 1);
-            if (max.getUtility() < board.getUtility()) {
-                board = max;
+            int maxResult= max(child, alpha, beta, depth - 1).integerValue;
+            utility = Math.min(utility, maxResult);
+            if (utility <= alpha) {
+                return utility;
             }
-            if (board.getUtility() <= alpha) {
-                return board;
-            }
-            beta = Math.min(beta, board.getUtility());
+            beta = Math.min(beta, utility);
         }
-        return board;
+        return utility;
     }
 
     public static Position getUserMove() {
