@@ -47,6 +47,14 @@ public class RowLine {
         }
     }
 
+    public Position getLeftEnd() {
+        return leftEnd;
+    }
+
+    public Position getRightEnd() {
+        return rightEnd;
+    }
+
     public int size() {
         return this.includedPositions.size();
     }

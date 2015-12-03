@@ -39,13 +39,12 @@ public class Game {
     }
 
     public static Board minimax(Board initialBoard, int depth) {
-//        initialBoard.setAlpha(Integer.MIN_VALUE);
-//        initialBoard.setBeta(Integer.MAX_VALUE);
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         return max(initialBoard, alpha, beta, depth);
     }
 
+    //TODO make sure false and true is correct
     /**
      * returns the minimum child of the input board's children
      *
@@ -53,6 +52,7 @@ public class Game {
      */
     public static Board min(Board board, int alpha, int beta, int depth) {
         if (depth == 0 || board.gameIsOver()) {
+            board.setUtility(board.getStaticEvaluation(false));
             return board;
         }
         board.setUtility(Integer.MAX_VALUE);
@@ -72,11 +72,12 @@ public class Game {
 
     /**
      * returns the maximum child of the input board's children
-     *
+     *  when this method is called, it is the ai's turn to move
      * @param board
      */
     public static Board max(Board board, int alpha, int beta, int depth) {
         if (depth == 0 || board.gameIsOver()) {
+            board.setUtility(board.getStaticEvaluation(true));
             return board;
         }
         board.setUtility(Integer.MIN_VALUE);

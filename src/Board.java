@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -9,9 +9,7 @@ public class Board {
     private int dimension;
     private Position lastPlacedPosition;
     private int utility;
-
-    private int alpha;
-    private int beta;
+    private List<Piece> pieces = new ArrayList<>();
 
 
     public Board(int dimension) {
@@ -33,6 +31,7 @@ public class Board {
         int column = piecePosition.getColumn();
         if (isValidPosition(row, column) && isEmpty(row, column)) {
             board[row][column] = piece;
+            pieces.add(piece);
             lastPlacedPosition = piecePosition;
             merge(piece);
             return true;
@@ -44,6 +43,7 @@ public class Board {
 
     /**
      * returns whether a given piece can be merged with the given position
+     *
      * @param piece
      * @param position
      * @return
@@ -67,6 +67,7 @@ public class Board {
     public boolean placeX(Position position) {
         return place(new XPiece(position));
     }
+
     public boolean placeO(Position position) {
         return place(new OPiece(position));
     }
@@ -76,7 +77,7 @@ public class Board {
     }
 
     private boolean isValidPosition(Position position) {
-        return isValidPosition(position.getRow(),position.getColumn());
+        return isValidPosition(position.getRow(), position.getColumn());
     }
 
     private Position immediateLeftPostion(Position position) {
@@ -88,11 +89,11 @@ public class Board {
     }
 
     private Position immediateUpPostion(Position position) {
-        return new Position(position.getRow()-1, position.getColumn());
+        return new Position(position.getRow() - 1, position.getColumn());
     }
 
     private Position immediateDownPostion(Position position) {
-        return new Position(position.getRow()+1, position.getColumn());
+        return new Position(position.getRow() + 1, position.getColumn());
     }
 
     private boolean isEmpty(int x, int y) {
@@ -106,7 +107,7 @@ public class Board {
     private void merge(Piece piece) {
         Position piecePosition = piece.getPosition();
         Position left = immediateLeftPostion(piecePosition);
-        if (isMergeable(piece,left)) {
+        if (isMergeable(piece, left)) {
             piece.mergeRow(getPiece(left));
         }
 
@@ -116,7 +117,7 @@ public class Board {
         }
 
         Position up = immediateUpPostion(piecePosition);
-        if (isMergeable(piece,up)) {
+        if (isMergeable(piece, up)) {
             piece.mergeColumn(getPiece(up));
         }
 
@@ -134,21 +135,6 @@ public class Board {
         this.utility = utility;
     }
 
-//    public int getAlpha() {
-//        return alpha;
-//    }
-//
-//    public void setAlpha(int alpha) {
-//        this.alpha = alpha;
-//    }
-//
-//    public int getBeta() {
-//        return beta;
-//    }
-//
-//    public void setBeta(int beta) {
-//        this.beta = beta;
-//    }
 
     public boolean gameIsOver() {
         Piece piece = getPiece(lastPlacedPosition);
@@ -180,6 +166,8 @@ public class Board {
 
     /**
      * picks the best children to search using minimax
+     * remmeber to deep copy rowline and columnline
+     *
      * @return
      */
     public List<Board> generateChildren() {
@@ -188,9 +176,60 @@ public class Board {
 
     /**
      * returns the utility of being in this board state
+     *
      * @return
      */
-    public int getStaticEvaluation(){
+    public int getStaticEvaluation(boolean computerTurn) {
+        Set<RowLine> xRows = new LinkedHashSet<>();
+        Set<RowLine> oRows = new LinkedHashSet<>();
+        Set<ColumnLine> xColumns = new LinkedHashSet<>();
+        Set<ColumnLine> oColumns = new LinkedHashSet<>();
+        for (Piece[] pieceArray: board ) {
+            for (Piece piece : pieceArray) {
+                if (piece == null) {
+                    continue;
+                }
+                RowLine currentRowLine = piece.getRowLine();
+                ColumnLine currentColumnLine = piece.getColumnLine();
+                if (piece.getSide() == 'o') {
+                    oRows.add(currentRowLine);
+                    oColumns.add(currentColumnLine);
+                } else {
+                    xRows.add(currentRowLine);
+                    xColumns.add(currentColumnLine);
+                }
+            }
+        }
+
+        int xScore = 0;
+        int oScore = 0;
+
+        for (RowLine rowLine : xRows) {
+            if (computerTurn) {
+                if (rowLine.size() >= 4) {
+                    return Integer.MAX_VALUE;
+                } else if (rowLine.size() == 3) {
+                    Position left = immediateLeftPostion(rowLine.getLeftEnd());
+                    Position right = immediateRightPostion(rowLine.getRightEnd());
+                    if ((isValidPosition(left) && isEmpty(left))
+                            || (isValidPosition(right) && isEmpty(right))) {
+                        return Integer.MAX_VALUE;
+                    } else {
+
+                    }
+
+
+
+                } else if (rowLine.size() == 2) {
+
+                } else {
+
+                }
+
+            } else {
+
+            }
+        }
 
         return 0;
     }
