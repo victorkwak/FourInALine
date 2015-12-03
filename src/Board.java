@@ -20,6 +20,74 @@ public class Board {
         columnLines = new ColumnLine[dimension][dimension];
     }
 
+    public Threat Victoria() {
+        Set<RowLine> allUniqueRowLines = new LinkedHashSet<>();
+        Set<ColumnLine> allUniqueColumnLines = new LinkedHashSet<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (rowLines[i][j] != null && getPiece(new Position(i, j)).getSide() == Constants.XChar) {
+                    allUniqueRowLines.add(rowLines[i][j]);
+                }
+                if (columnLines[i][j] != null && getPiece(new Position(i, j)).getSide() == Constants.XChar) {
+                    allUniqueColumnLines.add(columnLines[i][j]);
+                }
+            }
+        }
+
+        List<Threat> allThreats = new ArrayList<>();
+
+        for (RowLine rowLine : allUniqueRowLines) {
+            if (rowLine.size() == 3) {
+                //TODO consider a space??? "jump"
+                Position left = immediateLeftPostion(rowLine.getLeftEnd());
+                Position right = immediateRightPostion(rowLine.getRightEnd());
+                Position leftLeft = immediateLeftPostion(left);
+                Position rightRight = immediateRightPostion(right);
+
+                if (isValidPosition(left) && isEmpty(left)) {
+                    Position gainSquare = left;
+                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+                    return new Threat(gainSquare, restSquares, null);
+                }
+                if (isValidPosition(right) && isEmpty(right)) {
+                    Position gainSquare = right;
+                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+                    return new Threat(gainSquare, restSquares, null);
+                }
+                //otherwise you are blocked on both sides
+
+            } else if (rowLine.size() == 2) {
+                Position left = immediateLeftPostion(rowLine.getLeftEnd());
+                Position right = immediateRightPostion(rowLine.getRightEnd());
+                Position leftLeft = immediateLeftPostion(left);
+                Position rightRight = immediateRightPostion(right);
+                //Separated 3
+                if (isValidPosition(left) && isEmpty(left) && isValidPosition(leftLeft) && isEmpty(leftLeft)) {
+                    Position gainSquare = left;
+                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+                    return new Threat(gainSquare, restSquares, null);
+                }
+                //Separated 3
+                if (isValidPosition(right) && isEmpty(right) && isValidPosition(rightRight) && isEmpty(rightRight)) {
+                    Position gainSquare = right;
+                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+                    return new Threat(gainSquare, restSquares, null);
+                }
+
+                if (isValidPosition(left) && isEmpty(left) && isValidPosition(right) && isEmpty(right)) {
+                    Position gainSquare = left;
+                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+
+                }
+
+            }
+
+
+
+        }
+
+    }
+
 
     public Board(Board board) {
         this.dimension = board.dimension;
@@ -46,6 +114,7 @@ public class Board {
      * @param piece
      * @return
      */
+
     private boolean place(Piece piece) {
         if (piece == null) {
             throw new RuntimeException("Adding a null piece!");
