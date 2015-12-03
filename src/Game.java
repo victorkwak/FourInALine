@@ -32,10 +32,22 @@ public class Game {
             System.out.println(board);
         } else if (response.equals("y")) {
             startedFirst = true;
-            board.placeX(3, 3);
-            System.out.println("Computer move: \n" + board);
-            board.placeO(getUserMove(board));
-            System.out.println(board);
+            Position[] initialPositions = new Position[3];
+            Position[] initUserMoves = new Position[2];
+            initialPositions[0] = new Position(3, 3);
+            for (int i = 0; i < 2; i++) {
+                board.placeX(initialPositions[i]);
+                System.out.println("Computer move: \n" + board);
+                initUserMoves[i] = getUserMove(board);
+                board.placeO(initUserMoves[i]);
+                System.out.println(board);
+                if (initUserMoves[0].getRow() != 3) {
+                    initialPositions[i + 1] = new Position(3, 4);
+                } else {
+                    initialPositions[i + 1] = new Position(4, 3);
+                }
+            }
+
         } else {
             throw new RuntimeException("Bad user input");
         }
