@@ -6,7 +6,7 @@ import java.util.Scanner;
  * O is player
  */
 public class Game {
-    private static long counter = 0;
+    private static boolean startedFirst;
 
     private static Scanner scanner = new Scanner(System.in);
 
@@ -26,10 +26,12 @@ public class Game {
 
 
         if (response.equals("n")) {
+            startedFirst = false;
             Position userPosition = getUserMove();
             board.placeO(userPosition);
             System.out.println(board);
         } else if (response.equals("y")) {
+            startedFirst = true;
             board.placeX(3, 3);
             System.out.println("Computer move: \n" + board);
             board.placeO(getUserMove());
@@ -42,7 +44,6 @@ public class Game {
 
         //computer move
         while (!board.gameIsOver()) {
-            counter = 0;
             board = minimax(board, Constants.DEPTH);
             System.out.println(board);
             if (board.gameIsOver()) {
@@ -71,7 +72,7 @@ public class Game {
      */
     public static IntBoard max(Board board, int alpha, int beta, int depth) {
         if (depth == 0 || board.gameIsOver()) {
-            board.setUtility(board.getStaticEvaluation(true));
+            board.setUtility(board.getStaticEvaluation(true, startedFirst));
             return new IntBoard(board, board.getUtility());
         }
         List<Board> children = board.generateChildren(true);
@@ -101,7 +102,7 @@ public class Game {
      */
     public static int min(Board board, int alpha, int beta, int depth) {
         if (depth == 0 || board.gameIsOver()) {
-            board.setUtility(board.getStaticEvaluation(false));
+            board.setUtility(board.getStaticEvaluation(false, startedFirst));
             return board.getUtility();
         }
         List<Board> children = board.generateChildren(false);

@@ -24,8 +24,6 @@ public abstract class Piece {
         return this.getSide() == piece.getSide();
     }
 
-
-
     @Override
     public String toString() {
         return String.valueOf(side);

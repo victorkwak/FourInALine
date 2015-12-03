@@ -147,13 +147,13 @@ public class Board {
 
 
         Position left = immediateLeftPostion(piecePosition);
-        while (isMergeable(piece,left)) {
+        while (isMergeable(piece, left)) {
             allRowLinePositions.add(left);
             left = immediateLeftPostion(left);
         }
 
         Position right = immediateRightPostion(piecePosition);
-        while (isMergeable(piece,right)) {
+        while (isMergeable(piece, right)) {
             allRowLinePositions.add(right);
             right = immediateRightPostion(right);
         }
@@ -167,20 +167,19 @@ public class Board {
         }
 
 
-
         columnLines[row][column] = new ColumnLine(new Position(row, column));
-        ColumnLine currentColumnLine= columnLines[row][column];
+        ColumnLine currentColumnLine = columnLines[row][column];
         List<Position> allColumnLinePositions = new ArrayList<>();
 
 
         Position up = immediateUpPostion(piecePosition);
-        while (isMergeable(piece,up)) {
+        while (isMergeable(piece, up)) {
             allColumnLinePositions.add(up);
-            up= immediateUpPostion(up);
+            up = immediateUpPostion(up);
         }
 
         Position down = immediateDownPostion(piecePosition);
-        while (isMergeable(piece,down)) {
+        while (isMergeable(piece, down)) {
             allColumnLinePositions.add(down);
             down = immediateDownPostion(down);
         }
@@ -274,12 +273,8 @@ public class Board {
             }
         }
 
-        Collections.sort(possiblePositions, new Comparator<Position>() {
-            @Override
-            public int compare(Position o1, Position o2) {
-                return o1.distanceBetween(lastPlacedPosition) - o2.distanceBetween(lastPlacedPosition);
-            }
-        });
+        Collections.sort(possiblePositions,
+                (o1, o2) -> o1.distanceBetween(lastPlacedPosition) - o2.distanceBetween(lastPlacedPosition));
 
         if (possiblePositions.size() > Constants.NUM_CHILDREN) {
             possiblePositions = possiblePositions.subList(0, Constants.NUM_CHILDREN);
@@ -303,7 +298,7 @@ public class Board {
      *
      * @return
      */
-    public int getStaticEvaluation(boolean computerTurn) {
+    public int getStaticEvaluation(boolean computerTurn, boolean startedFirst) {
         if (gameIsOver()) {
             Piece piece = getPiece(lastPlacedPosition);
             if (piece.getSide() == Constants.OChar) {
@@ -339,8 +334,7 @@ public class Board {
         int xScore = 0;
         int oScore = 0;
 
-
-        //iterate through rows
+        //iterate through X rows
         for (RowLine rowLine : xRows) {
             if (computerTurn) {
                 if (rowLine.size() >= 4) {
@@ -352,7 +346,7 @@ public class Board {
                     if ((isValidPosition(left) && isEmpty(left))
                             || (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     } else {
                         //we have a blocked 3
                         //no points
@@ -364,37 +358,40 @@ public class Board {
                     Position rightRight = immediateRightPostion(right);
 
                     //two on the left and one on the right
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
-                                    (isValidPosition(right) && isEmpty(right))
-                            ) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
+                            (isValidPosition(right) && isEmpty(right))) {
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
                     //two on the right, one on the left
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(right) && isEmpty(right)) &&
-                                    (isValidPosition(rightRight) && isEmpty(rightRight))
-                            ) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(right) && isEmpty(right)) &&
+                            (isValidPosition(rightRight) && isEmpty(rightRight))) {
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(right) && isEmpty(right)) &&
-                            isValidPosition(rightRight) && !isEmpty(rightRight) && getPiece(rightRight).getSide() == Constants.XChar) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                            isValidPosition(rightRight) && !isEmpty(rightRight) &&
+                            getPiece(rightRight).getSide() == Constants.XChar) {
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(left) && isEmpty(left)) &&
-                            isValidPosition(leftLeft) && !isEmpty(leftLeft) && getPiece(leftLeft).getSide() == Constants.XChar) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                            isValidPosition(leftLeft) && !isEmpty(leftLeft) &&
+                            getPiece(leftLeft).getSide() == Constants.XChar) {
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
-                } else { //rowline.size is 1
-
+                } else {
+                    //rowline.size is 1
+                    Position left = immediateLeftPostion(rowLine.getLeftEnd());
+                    Position right = immediateRightPostion(rowLine.getRightEnd());
+                    if (isValidPosition(left) && isEmpty(left) || isValidPosition(right) && isEmpty(right)) {
+                        xScore += startedFirst ? Constants.LOW : Constants.LOW * Constants.DOWN_MULTIPLIER;
+                    }
 
                 }
 
@@ -409,11 +406,11 @@ public class Board {
                     if ((isValidPosition(left) && isEmpty(left))
                             && (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        xScore += 1000;
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     } else if ((isValidPosition(left) && isEmpty(left))
                             || (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        xScore += 250;
+                        xScore += Constants.MID;
                     } else {
                         //we have a blocked 3
                         //no points
@@ -425,39 +422,41 @@ public class Board {
                     Position rightRight = immediateRightPostion(right);
 
                     //two on the left and one on the right
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
-                                    (isValidPosition(right) && isEmpty(right))
-                            ) {
-                        xScore += 500;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
+                            (isValidPosition(right) && isEmpty(right))) {
+                        xScore += Constants.MID;
                     }
 
                     //two on the right, one on the left
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(right) && isEmpty(right)) &&
-                                    (isValidPosition(rightRight) && isEmpty(rightRight))
-                            ) {
-                        xScore += 500;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(right) && isEmpty(right)) &&
+                            (isValidPosition(rightRight) && isEmpty(rightRight))) {
+                        xScore += Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(right) && isEmpty(right)) &&
-                            isValidPosition(rightRight) && !isEmpty(rightRight) && getPiece(rightRight).getSide() == Constants.XChar) {
-                        xScore += 500;
+                            isValidPosition(rightRight) && !isEmpty(rightRight) &&
+                            getPiece(rightRight).getSide() == Constants.XChar) {
+                        xScore += Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(left) && isEmpty(left)) &&
-                            isValidPosition(leftLeft) && !isEmpty(leftLeft) && getPiece(leftLeft).getSide() == Constants.XChar) {
-                        xScore += 500;
+                            isValidPosition(leftLeft) && !isEmpty(leftLeft) &&
+                            getPiece(leftLeft).getSide() == Constants.XChar) {
+                        xScore += Constants.MID;
                     }
 
-                } else { //rowline.size is 1
-
+                } else {
+                    //rowline.size is 1
+                    Position left = immediateLeftPostion(rowLine.getLeftEnd());
+                    Position right = immediateRightPostion(rowLine.getRightEnd());
+                    if (isValidPosition(left) && isEmpty(left) || isValidPosition(right) && isEmpty(right)) {
+                        xScore += !startedFirst ? Constants.LOW : Constants.LOW * Constants.DOWN_MULTIPLIER;
+                    }
                 }
-
 
                 throw new RuntimeException("don't know what to do");
                 //TODO
@@ -478,7 +477,7 @@ public class Board {
                     if ((isValidPosition(up) && isEmpty(up))
                             || (isValidPosition(down) && isEmpty(down))) {
                         //if we have an open 3
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     } else {
                         //we have a blocked 3
                     }
@@ -494,28 +493,28 @@ public class Board {
                                     (isValidPosition(upUp) && isEmpty(upUp)) &&
                                     (isValidPosition(down) && isEmpty(down))
                             ) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
                     //two down, one up
-                    if (
-                            (isValidPosition(up) && isEmpty(up)) &&
-                                    (isValidPosition(down) && isEmpty(down)) &&
-                                    (isValidPosition(downDown) && isEmpty(downDown))
-                            ) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                    if ((isValidPosition(up) && isEmpty(up)) &&
+                            (isValidPosition(down) && isEmpty(down)) &&
+                            (isValidPosition(downDown) && isEmpty(downDown))) {
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(down) && isEmpty(down)) &&
-                            isValidPosition(downDown) && !isEmpty(downDown) && getPiece(downDown).getSide() == Constants.XChar) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                            isValidPosition(downDown) && !isEmpty(downDown) &&
+                            getPiece(downDown).getSide() == Constants.XChar) {
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(up) && isEmpty(up)) &&
-                            isValidPosition(upUp) && !isEmpty(upUp) && getPiece(upUp).getSide() == Constants.XChar) {
-                        xScore += 1000 * Constants.UP_MULTIPLIER;
+                            isValidPosition(upUp) && !isEmpty(upUp) &&
+                            getPiece(upUp).getSide() == Constants.XChar) {
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     }
 
                 } else { //rowline.size is 1
@@ -534,11 +533,11 @@ public class Board {
                     if ((isValidPosition(up) && isEmpty(up))
                             && (isValidPosition(down) && isEmpty(down))) {
                         //if we have an open 3
-                        xScore += 1000;
+                        xScore += startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     } else if ((isValidPosition(up) && isEmpty(up))
                             || (isValidPosition(down) && isEmpty(down))) {
                         //if we have an open 3
-                        xScore += 500;
+                        xScore += Constants.MID;
                     } else {
                         //we have a blocked 3
                     }
@@ -549,33 +548,31 @@ public class Board {
                     Position downDown = immediateDownPostion(down);
 
                     //two up and one down
-                    if (
-                            (isValidPosition(up) && isEmpty(up)) &&
-                                    (isValidPosition(upUp) && isEmpty(upUp)) &&
-                                    (isValidPosition(down) && isEmpty(down))
-                            ) {
-                        xScore += 500;
+                    if ((isValidPosition(up) && isEmpty(up)) &&
+                            (isValidPosition(upUp) && isEmpty(upUp)) &&
+                            (isValidPosition(down) && isEmpty(down))) {
+                        xScore += Constants.MID;
                     }
 
                     //two down, one up
-                    if (
-                            (isValidPosition(up) && isEmpty(up)) &&
-                                    (isValidPosition(down) && isEmpty(down)) &&
-                                    (isValidPosition(downDown) && isEmpty(downDown))
-                            ) {
-                        xScore += 500;
+                    if ((isValidPosition(up) && isEmpty(up)) &&
+                            (isValidPosition(down) && isEmpty(down)) &&
+                            (isValidPosition(downDown) && isEmpty(downDown))) {
+                        xScore += Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(down) && isEmpty(down)) &&
-                            isValidPosition(downDown) && !isEmpty(downDown) && getPiece(downDown).getSide() == Constants.XChar) {
-                        xScore += 500;
+                            isValidPosition(downDown) && !isEmpty(downDown) &&
+                            getPiece(downDown).getSide() == Constants.XChar) {
+                        xScore += Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(up) && isEmpty(up)) &&
-                            isValidPosition(upUp) && !isEmpty(upUp) && getPiece(upUp).getSide() == Constants.XChar) {
-                        xScore += 500;
+                            isValidPosition(upUp) && !isEmpty(upUp) &&
+                            getPiece(upUp).getSide() == Constants.XChar) {
+                        xScore += Constants.MID;
                     }
 
                 } else { //rowline.size is 1
@@ -603,11 +600,11 @@ public class Board {
                     if ((isValidPosition(left) && isEmpty(left))
                             && (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        oScore += 1000;
+                        oScore += Constants.HIGH * Constants.UP_MULTIPLIER;
                     } else if ((isValidPosition(left) && isEmpty(left))
                             || (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        oScore += 1000;
+                        oScore += Constants.HIGH * Constants.UP_MULTIPLIER;
                     } else {
                         //we have a blocked 3
                     }
@@ -618,33 +615,31 @@ public class Board {
                     Position rightRight = immediateRightPostion(right);
 
                     //two on the left and one on the right
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
-                                    (isValidPosition(right) && isEmpty(right))
-                            ) {
-                        oScore += 500;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
+                            (isValidPosition(right) && isEmpty(right))) {
+                        oScore += !startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                     //two on the right, one on the left
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(right) && isEmpty(right)) &&
-                                    (isValidPosition(rightRight) && isEmpty(rightRight))
-                            ) {
-                        oScore += 500;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(right) && isEmpty(right)) &&
+                            (isValidPosition(rightRight) && isEmpty(rightRight))) {
+                        oScore += !startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(right) && isEmpty(right)) &&
-                            isValidPosition(rightRight) && !isEmpty(rightRight) && getPiece(rightRight).getSide() == Constants.OChar) {
-                        oScore += 500;
+                            isValidPosition(rightRight) && !isEmpty(rightRight) &&
+                            getPiece(rightRight).getSide() == Constants.OChar) {
+                        oScore += !startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(left) && isEmpty(left)) &&
-                            isValidPosition(leftLeft) && !isEmpty(leftLeft) && getPiece(leftLeft).getSide() == Constants.OChar) {
-                        oScore += 500;
+                            isValidPosition(leftLeft) && !isEmpty(leftLeft) &&
+                            getPiece(leftLeft).getSide() == Constants.OChar) {
+                        oScore += !startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                 } else { //rowline.size is 1
@@ -663,11 +658,11 @@ public class Board {
                     if ((isValidPosition(left) && isEmpty(left))
                             && (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        oScore += 1000 * Constants.UP_MULTIPLIER;
+                        oScore += !startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     } else if ((isValidPosition(left) && isEmpty(left))
                             || (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        oScore += 1000 * Constants.UP_MULTIPLIER;
+                        oScore += !startedFirst ? Constants.HIGH * Constants.UP_MULTIPLIER : Constants.HIGH;
                     } else {
                         //we have a blocked 3
                     }
@@ -678,33 +673,31 @@ public class Board {
                     Position rightRight = immediateRightPostion(right);
 
                     //two on the left and one on the right
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
-                                    (isValidPosition(right) && isEmpty(right))
-                            ) {
-                        oScore += 1000;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
+                            (isValidPosition(right) && isEmpty(right))) {
+                        oScore += Constants.HIGH;
                     }
 
                     //two on the right, one on the left
-                    if (
-                            (isValidPosition(left) && isEmpty(left)) &&
-                                    (isValidPosition(right) && isEmpty(right)) &&
-                                    (isValidPosition(rightRight) && isEmpty(rightRight))
-                            ) {
-                        oScore += 1000;
+                    if ((isValidPosition(left) && isEmpty(left)) &&
+                            (isValidPosition(right) && isEmpty(right)) &&
+                            (isValidPosition(rightRight) && isEmpty(rightRight))) {
+                        oScore += Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(right) && isEmpty(right)) &&
-                            isValidPosition(rightRight) && !isEmpty(rightRight) && getPiece(rightRight).getSide() == Constants.OChar) {
-                        oScore += 1000;
+                            isValidPosition(rightRight) && !isEmpty(rightRight) &&
+                            getPiece(rightRight).getSide() == Constants.OChar) {
+                        oScore += Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(left) && isEmpty(left)) &&
-                            isValidPosition(leftLeft) && !isEmpty(leftLeft) && getPiece(leftLeft).getSide() == Constants.OChar) {
-                        oScore += 1000;
+                            isValidPosition(leftLeft) && !isEmpty(leftLeft) &&
+                            getPiece(leftLeft).getSide() == Constants.OChar) {
+                        oScore += Constants.HIGH;
                     }
 
                 } else { //rowline.size is 1
@@ -727,11 +720,11 @@ public class Board {
                     if ((isValidPosition(up) && isEmpty(up))
                             && (isValidPosition(down) && isEmpty(down))) {
                         //if we have an open 3
-                        oScore += 1000;
+                        oScore += Constants.HIGH;
                     } else if ((isValidPosition(up) && isEmpty(up))
                             || (isValidPosition(down) && isEmpty(down))) {
                         //if we have an open 3
-                        oScore += 500;
+                        oScore += Constants.MID;
                     } else {
                         //we have a blocked 3
                     }
@@ -742,33 +735,31 @@ public class Board {
                     Position downDown = immediateDownPostion(down);
 
                     //two up and one down
-                    if (
-                            (isValidPosition(up) && isEmpty(up)) &&
-                                    (isValidPosition(upUp) && isEmpty(upUp)) &&
-                                    (isValidPosition(down) && isEmpty(down))
-                            ) {
-                        oScore += 500;
+                    if ((isValidPosition(up) && isEmpty(up)) &&
+                            (isValidPosition(upUp) && isEmpty(upUp)) &&
+                            (isValidPosition(down) && isEmpty(down))) {
+                        oScore += Constants.MID;
                     }
 
                     //two down, one up
-                    if (
-                            (isValidPosition(up) && isEmpty(up)) &&
-                                    (isValidPosition(down) && isEmpty(down)) &&
-                                    (isValidPosition(downDown) && isEmpty(downDown))
-                            ) {
-                        oScore += 500;
+                    if ((isValidPosition(up) && isEmpty(up)) &&
+                            (isValidPosition(down) && isEmpty(down)) &&
+                            (isValidPosition(downDown) && isEmpty(downDown))) {
+                        oScore += Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(down) && isEmpty(down)) &&
-                            isValidPosition(downDown) && !isEmpty(downDown) && getPiece(downDown).getSide() == Constants.XChar) {
-                        oScore += 500;
+                            isValidPosition(downDown) && !isEmpty(downDown) &&
+                            getPiece(downDown).getSide() == Constants.XChar) {
+                        oScore += Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(up) && isEmpty(up)) &&
-                            isValidPosition(upUp) && !isEmpty(upUp) && getPiece(upUp).getSide() == Constants.XChar) {
-                        oScore += 500;
+                            isValidPosition(upUp) && !isEmpty(upUp) &&
+                            getPiece(upUp).getSide() == Constants.XChar) {
+                        oScore += Constants.MID;
                     }
 
                 } else { //rowline.size is 1
@@ -786,11 +777,11 @@ public class Board {
                     if ((isValidPosition(up) && isEmpty(up))
                             && (isValidPosition(down) && isEmpty(down))) {
                         //if we have an open 3
-                        oScore += 1000;
+                        oScore += Constants.HIGH;
                     } else if ((isValidPosition(up) && isEmpty(up))
                             || (isValidPosition(down) && isEmpty(down))) {
                         //if we have an open 3
-                        oScore += 1000;
+                        oScore += Constants.HIGH;
                     } else {
                         //we have a blocked 3
                     }
@@ -801,33 +792,31 @@ public class Board {
                     Position downDown = immediateDownPostion(down);
 
                     //two up and one down
-                    if (
-                            (isValidPosition(up) && isEmpty(up)) &&
-                                    (isValidPosition(upUp) && isEmpty(upUp)) &&
-                                    (isValidPosition(down) && isEmpty(down))
-                            ) {
-                        oScore += 1000;
+                    if ((isValidPosition(up) && isEmpty(up)) &&
+                            (isValidPosition(upUp) && isEmpty(upUp)) &&
+                            (isValidPosition(down) && isEmpty(down))) {
+                        oScore += Constants.HIGH;
                     }
 
                     //two down, one up
-                    if (
-                            (isValidPosition(up) && isEmpty(up)) &&
-                                    (isValidPosition(down) && isEmpty(down)) &&
-                                    (isValidPosition(downDown) && isEmpty(downDown))
-                            ) {
-                        oScore += 1000;
+                    if ((isValidPosition(up) && isEmpty(up)) &&
+                            (isValidPosition(down) && isEmpty(down)) &&
+                            (isValidPosition(downDown) && isEmpty(downDown))) {
+                        oScore += Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(down) && isEmpty(down)) &&
-                            isValidPosition(downDown) && !isEmpty(downDown) && getPiece(downDown).getSide() == Constants.XChar) {
-                        oScore += 1000;
+                            isValidPosition(downDown) && !isEmpty(downDown) &&
+                            getPiece(downDown).getSide() == Constants.XChar) {
+                        oScore += Constants.HIGH;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(up) && isEmpty(up)) &&
-                            isValidPosition(upUp) && !isEmpty(upUp) && getPiece(upUp).getSide() == Constants.XChar) {
-                        oScore += 1000;
+                            isValidPosition(upUp) && !isEmpty(upUp) &&
+                            getPiece(upUp).getSide() == Constants.XChar) {
+                        oScore += Constants.HIGH;
                     }
 
                 } else { //rowline.size is 1
@@ -838,6 +827,4 @@ public class Board {
         }
         return xScore - oScore;
     }
-
-
 }
