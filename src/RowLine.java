@@ -47,4 +47,8 @@ public class RowLine {
         }
     }
 
+    public int size() {
+        return this.includedPositions.size();
+    }
+
 }

@@ -31,8 +31,10 @@ public class Game {
 
         //computer move
         while (!board.gameIsOver()) {
-
+            board.placeO(getUserMove());
+            System.out.println(board);
         }
+        System.out.println("game over");
     }
 
     public static void Minimax(Board initialBoard) {

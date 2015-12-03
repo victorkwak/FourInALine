@@ -21,9 +21,9 @@ public class ColumnLine {
      */
     public void add(Position position){
         includedPositions.add(position);
-        if (position.getRow() == upperEnd.getRow() +1) {
+        if (position.getRow() == upperEnd.getRow() - 1) {
             upperEnd= position;
-        } else if (position.getRow() == lowerEnd.getRow() - 1) {
+        } else if (position.getRow() == lowerEnd.getRow() + 1) {
             lowerEnd = position;
         } else {
             throw new RuntimeException("Incorrect addition!!!");
@@ -32,7 +32,7 @@ public class ColumnLine {
 
 
     public void merge(ColumnLine columnLine){
-        if (columnLine.lowerEnd.getRow() != this.lowerEnd.getRow()) {
+        if (columnLine.lowerEnd.getColumn() != this.lowerEnd.getColumn()) {
             throw new RuntimeException("Wrong merge!!!!!!!");
         }
         if (columnLine == this) {
@@ -40,12 +40,16 @@ public class ColumnLine {
         }
 
         this.includedPositions.addAll(columnLine.includedPositions);
-        if (upperEnd.getRow() == columnLine.lowerEnd.getRow() -1) {
+        if (upperEnd.getRow() == columnLine.lowerEnd.getRow() +1) {
             upperEnd= columnLine.upperEnd;
-        } else if (lowerEnd.getRow() == columnLine.upperEnd.getRow() + 1) {
+        } else if (lowerEnd.getRow() == columnLine.upperEnd.getRow() - 1) {
             lowerEnd = columnLine.lowerEnd;
         } else {
             throw new RuntimeException("Incorrect merge");
         }
+    }
+
+    public int size() {
+        return this.includedPositions.size();
     }
 }

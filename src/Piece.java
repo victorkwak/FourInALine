@@ -11,23 +11,19 @@ public abstract class Piece {
     public Piece(Position position, char side) {
         this.position = position;
         this.side = side;
+        this.rowLine = new RowLine(this.position);
+        this.columnLine = new ColumnLine(this.position);
     }
 
     public ColumnLine getColumnLine() {
         return columnLine;
     }
 
-    public void setColumnLine(ColumnLine columnLine) {
-        this.columnLine = columnLine;
-    }
 
     public RowLine getRowLine() {
         return rowLine;
     }
 
-    public void setRowLine(RowLine rowLine) {
-        this.rowLine = rowLine;
-    }
 
     public Position getPosition() {
         return position;
@@ -35,6 +31,21 @@ public abstract class Piece {
 
     public char getSide() {
         return side;
+    }
+
+    public boolean isSameSide(Piece piece){
+        return this.getSide() == piece.getSide();
+    }
+
+    public void mergeRow(Piece piece){
+        this.rowLine.merge(piece.rowLine);
+        piece.rowLine = this.rowLine;
+    }
+
+    public void mergeColumn(Piece piece){
+        this.columnLine.merge(piece.columnLine);
+        piece.columnLine = this.columnLine;
+
     }
 
 

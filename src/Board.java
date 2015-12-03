@@ -6,7 +6,7 @@ import java.util.stream.IntStream;
 public class Board {
     private Piece[][] board;
     private int dimension;
-    private Position lastPlacePosition;
+    private Position lastPlacedPosition;
 
     public Board(int dimension) {
         this.dimension = dimension;
@@ -14,17 +14,40 @@ public class Board {
     }
 
     /**
-     * places piece on board, returns whether action was successful
+     * places piece on board,
+     * merges with neighbors
+     * returns whether action was successful
      *
      * @param piece
      * @return
      */
     private boolean place(Piece piece) {
-        int x = piece.getPosition().getRow();
-        int y = piece.getPosition().getColumn();
-        if (isOnBoard(x, y) && isEmpty(x, y)) {
-            board[x][y] = piece;
-            lastPlacePosition = piece.getPosition();
+        Position piecePosition = piece.getPosition();
+        int row = piecePosition.getRow();
+        int column = piecePosition.getColumn();
+        if (isValidPosition(row, column) && isEmpty(row, column)) {
+            board[row][column] = piece;
+            lastPlacedPosition = piecePosition;
+
+            Position left = immediateLeftPostion(piecePosition);
+            if (isMergeable(piece,left)) {
+                piece.mergeRow(getPiece(left));
+            }
+
+            Position right = immediateRightPostion(piecePosition);
+            if (isMergeable(piece, right)) {
+                piece.mergeRow(getPiece(right));
+            }
+
+            Position up = immediateUpPostion(piecePosition);
+            if (isMergeable(piece,up)) {
+                piece.mergeColumn(getPiece(up));
+            }
+
+            Position down = immediateDownPostion(piecePosition);
+            if (isMergeable(piece, down)) {
+                piece.mergeColumn(getPiece(down));
+            }
 
             return true;
         } else {
@@ -32,6 +55,20 @@ public class Board {
         }
     }
 
+
+    /**
+     * returns whether a given piece can be merged with the given position
+     * @param piece
+     * @param position
+     * @return
+     */
+    private boolean isMergeable(Piece piece, Position position) {
+        return isValidPosition(position) && !isEmpty(position) && getPiece(position).isSameSide(piece);
+    }
+
+    private Piece getPiece(Position position) {
+        return board[position.getRow()][position.getColumn()];
+    }
 
 
 
@@ -51,13 +88,37 @@ public class Board {
         return place(new OPiece(position));
     }
 
-    private boolean isOnBoard(int x, int y) {
+    private boolean isValidPosition(int x, int y) {
         return x >= 0 && x < dimension && y >= 0 && y < dimension;
+    }
+
+    private boolean isValidPosition(Position position) {
+        return isValidPosition(position.getRow(),position.getColumn());
+    }
+
+    private Position immediateLeftPostion(Position position) {
+        return new Position(position.getRow(), position.getColumn() - 1);
+    }
+
+    private Position immediateRightPostion(Position position) {
+        return new Position(position.getRow(), position.getColumn() + 1);
+    }
+
+    private Position immediateUpPostion(Position position) {
+        return new Position(position.getRow()-1, position.getColumn());
+    }
+
+    private Position immediateDownPostion(Position position) {
+        return new Position(position.getRow()+1, position.getColumn());
     }
 
 
     private boolean isEmpty(int x, int y) {
         return board[x][y] == null;
+    }
+
+    private boolean isEmpty(Position position) {
+        return isEmpty(position.getRow(), position.getColumn());
     }
 
     private void merge(Piece piece) {
@@ -93,7 +154,8 @@ public class Board {
     }
 
     public boolean gameIsOver() {
-
+        Piece piece = getPiece(lastPlacedPosition);
+        return piece.getRowLine().size() == 4 || piece.getColumnLine().size() == 4;
     }
 
     @Override
