@@ -237,7 +237,9 @@ public class Board {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("   ");
-        IntStream.range(1, Constants.BOARD_DIMENSION + 1).forEach(i -> stringBuilder.append(i).append(" "));
+        for (int i = 1; i < Constants.BOARD_DIMENSION + 1; i++) {
+            stringBuilder.append(i).append(" ");
+        }
         stringBuilder.append("\n");
         char current = 'A';
         for (Piece[] pieces : board) {
@@ -273,8 +275,12 @@ public class Board {
             }
         }
 
-        Collections.sort(possiblePositions,
-                (o1, o2) -> o1.distanceBetween(lastPlacedPosition) - o2.distanceBetween(lastPlacedPosition));
+        Collections.sort(possiblePositions, new Comparator<Position>() {
+            @Override
+            public int compare(Position o1, Position o2) {
+                return o1.distanceBetween(lastPlacedPosition) - o2.distanceBetween(lastPlacedPosition);
+            }
+        });
 
         if (possiblePositions.size() > Constants.NUM_CHILDREN) {
             possiblePositions = possiblePositions.subList(0, Constants.NUM_CHILDREN);
@@ -519,7 +525,11 @@ public class Board {
 
                 } else { //rowline.size is 1
                     //somewhat arbitrary heuristic
-
+                    Position up = immediateLeftPostion(columnLine.getUpperEnd());
+                    Position down = immediateRightPostion(columnLine.getLowerEnd());
+                    if (isValidPosition(up) && isEmpty(up) || isValidPosition(down) && isEmpty(down)) {
+                        xScore += startedFirst ? Constants.LOW : Constants.LOW * Constants.DOWN_MULTIPLIER;
+                    }
                 }
 
             } else {
@@ -576,7 +586,11 @@ public class Board {
                     }
 
                 } else { //rowline.size is 1
-
+                    Position up = immediateLeftPostion(columnLine.getUpperEnd());
+                    Position down = immediateRightPostion(columnLine.getLowerEnd());
+                    if (isValidPosition(up) && isEmpty(up) || isValidPosition(down) && isEmpty(down)) {
+                        xScore += !startedFirst ? Constants.LOW : Constants.LOW * Constants.DOWN_MULTIPLIER;
+                    }
                 }
 
 
