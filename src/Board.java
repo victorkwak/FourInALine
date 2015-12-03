@@ -9,7 +9,6 @@ public class Board {
     private int dimension;
     private Position lastPlacedPosition;
     private int utility;
-    private List<Piece> pieces;
 
     private RowLine[][] rowLines;
     private ColumnLine[][] columnLines;
@@ -18,7 +17,6 @@ public class Board {
     public Board(int dimension) {
         this.dimension = dimension;
         board = new Piece[dimension][dimension];
-        pieces = new ArrayList<>();
         rowLines = new RowLine[dimension][dimension];
         columnLines= new ColumnLine[dimension][dimension];
     }
@@ -29,7 +27,6 @@ public class Board {
         this.board = new Piece[this.dimension][this.dimension];
         this.rowLines = new RowLine[dimension][dimension];
         this.columnLines= new ColumnLine[dimension][dimension];
-        this.pieces = new ArrayList<>(board.pieces);
 
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
@@ -57,7 +54,6 @@ public class Board {
         int column = piecePosition.getColumn();
         if (isValidPosition(row, column) && isEmpty(row, column)) {
             board[row][column] = piece;
-            pieces.add(piece);
 
             rowLines[row][column] = new RowLine(new Position(row,column));
             columnLines[row][column] = new ColumnLine(new Position(row,column));
@@ -222,12 +218,43 @@ public class Board {
 
     /**
      * picks the best children to search using minimax
-     * TODO remmeber to deep copy rowline and columnline
      *
      * @return
      */
-    public List<Board> generateChildren() {
-        return null;
+    public List<Board> generateChildren(boolean computerPlayer) {
+        List<Board> children = new ArrayList<>();
+
+        List<Position> possiblePositions = new ArrayList<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (isEmpty(i,j)) {
+                    possiblePositions.add(new Position(i,j));
+                }
+            }
+        }
+
+        Collections.sort(possiblePositions, new Comparator<Position>() {
+            @Override
+            public int compare(Position o1, Position o2) {
+                return o1.distanceBetween(lastPlacedPosition) - o2.distanceBetween(lastPlacedPosition);
+            }
+        });
+
+        if (possiblePositions.size() > Constants.NUM_CHILDREN) {
+            possiblePositions = possiblePositions.subList(0, Constants.NUM_CHILDREN);
+        }
+
+        for (Position position : possiblePositions) {
+            Board child = new Board(this);
+            if (computerPlayer) {
+                child.placeX(position);
+            } else {
+                child.placeO(position);
+            }
+            children.add(child);
+        }
+
+        return children;
     }
 
     /**
