@@ -1,7 +1,3 @@
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -10,10 +6,7 @@ import java.util.stream.IntStream;
 public class Board {
     private Piece[][] board;
     private int dimension;
-    private Map<Integer, Column> columns;
-    private Map<Integer, Row> rows;
-    private List<Threat> threats;
-
+    private Position lastPlacePosition;
 
     public Board(int dimension) {
         this.dimension = dimension;
@@ -27,64 +20,80 @@ public class Board {
      * @return
      */
     private boolean place(Piece piece) {
-        int x = piece.getPosition().getX();
-        int y = piece.getPosition().getY();
-        if (isOnBoard(x, y) && isNotAlreadyOccupied(x, y)) {
+        int x = piece.getPosition().getRow();
+        int y = piece.getPosition().getColumn();
+        if (isOnBoard(x, y) && isEmpty(x, y)) {
             board[x][y] = piece;
-            merge(piece);
+            lastPlacePosition = piece.getPosition();
+
             return true;
         } else {
             return false;
         }
     }
 
+
+
+
+
     public boolean placeX(int x, int y) {
         return place(new XPiece(new Position(x, y)));
     }
 
-    public boolean placeY(int x, int y) {
+    public boolean placeO(int x, int y) {
         return place(new OPiece(new Position(x, y)));
+    }
+
+    public boolean placeX(Position position) {
+        return place(new XPiece(position));
+    }
+    public boolean placeO(Position position) {
+        return place(new OPiece(position));
     }
 
     private boolean isOnBoard(int x, int y) {
         return x >= 0 && x < dimension && y >= 0 && y < dimension;
     }
 
-    private boolean isNotAlreadyOccupied(int x, int y) {
-        return board[x][y] != null;
-    }
 
     private boolean isEmpty(int x, int y) {
         return board[x][y] == null;
     }
 
     private void merge(Piece piece) {
-        int x = piece.getPosition().getX();
-        int y = piece.getPosition().getY();
-        //all the way left
-        if (x == 0) {
-            if (!isEmpty(x + 1, y)) {
+        int x = piece.getPosition().getRow();
+        int y = piece.getPosition().getColumn();
+        //not on the edges
+        //look left and right
+        if (!isEmpty(x - 1, y)) {
 
-            }
         }
-        //all the way right
-        if (x == Constants.BOARD_DIMENSION - 1) {
-            if (!isEmpty(x + 1, y)) {
+        if (!isEmpty(x - 2, y)) {
 
-            }
         }
-        //all the way top
-        if (y == 0) {
-            if (!isEmpty(x, y + 1)) {
+        if (!isEmpty(x + 1, y)) {
 
-            }
         }
-        //all the way bottom
-        if (y == Constants.BOARD_DIMENSION - 1) {
-            if (!isEmpty(x, y - 1)) {
+        if (!isEmpty(x + 2, y)) {
 
-            }
         }
+        //look up and down
+        if (!isEmpty(x, y + 1)) {
+
+        }
+        if (!isEmpty(x, y + 2)) {
+
+        }
+        if (!isEmpty(x, y - 1)) {
+
+        }
+        if (!isEmpty(x, y - 2)) {
+
+        }
+    }
+
+    public boolean gameIsOver() {
+
     }
 
     @Override
@@ -108,4 +117,6 @@ public class Board {
         }
         return stringBuilder.toString();
     }
+
+
 }
