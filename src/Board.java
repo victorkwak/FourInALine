@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -7,6 +8,11 @@ public class Board {
     private Piece[][] board;
     private int dimension;
     private Position lastPlacedPosition;
+    private int utility;
+
+    private int alpha;
+    private int beta;
+
 
     public Board(int dimension) {
         this.dimension = dimension;
@@ -28,27 +34,7 @@ public class Board {
         if (isValidPosition(row, column) && isEmpty(row, column)) {
             board[row][column] = piece;
             lastPlacedPosition = piecePosition;
-
-            Position left = immediateLeftPostion(piecePosition);
-            if (isMergeable(piece,left)) {
-                piece.mergeRow(getPiece(left));
-            }
-
-            Position right = immediateRightPostion(piecePosition);
-            if (isMergeable(piece, right)) {
-                piece.mergeRow(getPiece(right));
-            }
-
-            Position up = immediateUpPostion(piecePosition);
-            if (isMergeable(piece,up)) {
-                piece.mergeColumn(getPiece(up));
-            }
-
-            Position down = immediateDownPostion(piecePosition);
-            if (isMergeable(piece, down)) {
-                piece.mergeColumn(getPiece(down));
-            }
-
+            merge(piece);
             return true;
         } else {
             return false;
@@ -69,9 +55,6 @@ public class Board {
     private Piece getPiece(Position position) {
         return board[position.getRow()][position.getColumn()];
     }
-
-
-
 
     public boolean placeX(int x, int y) {
         return place(new XPiece(new Position(x, y)));
@@ -112,7 +95,6 @@ public class Board {
         return new Position(position.getRow()+1, position.getColumn());
     }
 
-
     private boolean isEmpty(int x, int y) {
         return board[x][y] == null;
     }
@@ -122,36 +104,51 @@ public class Board {
     }
 
     private void merge(Piece piece) {
-        int x = piece.getPosition().getRow();
-        int y = piece.getPosition().getColumn();
-        //not on the edges
-        //look left and right
-        if (!isEmpty(x - 1, y)) {
-
+        Position piecePosition = piece.getPosition();
+        Position left = immediateLeftPostion(piecePosition);
+        if (isMergeable(piece,left)) {
+            piece.mergeRow(getPiece(left));
         }
-        if (!isEmpty(x - 2, y)) {
 
+        Position right = immediateRightPostion(piecePosition);
+        if (isMergeable(piece, right)) {
+            piece.mergeRow(getPiece(right));
         }
-        if (!isEmpty(x + 1, y)) {
 
+        Position up = immediateUpPostion(piecePosition);
+        if (isMergeable(piece,up)) {
+            piece.mergeColumn(getPiece(up));
         }
-        if (!isEmpty(x + 2, y)) {
 
-        }
-        //look up and down
-        if (!isEmpty(x, y + 1)) {
-
-        }
-        if (!isEmpty(x, y + 2)) {
-
-        }
-        if (!isEmpty(x, y - 1)) {
-
-        }
-        if (!isEmpty(x, y - 2)) {
-
+        Position down = immediateDownPostion(piecePosition);
+        if (isMergeable(piece, down)) {
+            piece.mergeColumn(getPiece(down));
         }
     }
+
+    public int getUtility() {
+        return utility;
+    }
+
+    public void setUtility(int utility) {
+        this.utility = utility;
+    }
+
+//    public int getAlpha() {
+//        return alpha;
+//    }
+//
+//    public void setAlpha(int alpha) {
+//        this.alpha = alpha;
+//    }
+//
+//    public int getBeta() {
+//        return beta;
+//    }
+//
+//    public void setBeta(int beta) {
+//        this.beta = beta;
+//    }
 
     public boolean gameIsOver() {
         Piece piece = getPiece(lastPlacedPosition);
@@ -179,6 +176,25 @@ public class Board {
         }
         return stringBuilder.toString();
     }
+
+
+    /**
+     * picks the best children to search using minimax
+     * @return
+     */
+    public List<Board> generateChildren() {
+        return null;
+    }
+
+    /**
+     * returns the utility of being in this board state
+     * @return
+     */
+    public int getStaticEvaluation(){
+
+        return 0;
+    }
+
 
 
 }

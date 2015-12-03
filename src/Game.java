@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -37,12 +38,60 @@ public class Game {
         System.out.println("game over");
     }
 
-    public static void Minimax(Board initialBoard) {
-
+    public static Board minimax(Board initialBoard, int depth) {
+//        initialBoard.setAlpha(Integer.MIN_VALUE);
+//        initialBoard.setBeta(Integer.MAX_VALUE);
+        int alpha = Integer.MIN_VALUE;
+        int beta = Integer.MAX_VALUE;
+        return max(initialBoard, alpha, beta, depth);
     }
 
-    public static void min(Board initialBoard) {
+    /**
+     * returns the minimum child of the input board's children
+     *
+     * @param board
+     */
+    public static Board min(Board board, int alpha, int beta, int depth) {
+        if (depth == 0 || board.gameIsOver()) {
+            return board;
+        }
+        board.setUtility(Integer.MAX_VALUE);
+        List<Board> children = board.generateChildren();
+        for (Board child : children) {
+            Board max = max(child, alpha, beta, depth - 1);
+            if (max.getUtility() < board.getUtility()) {
+                board = max;
+            }
+            if (board.getUtility() <= alpha) {
+                return board;
+            }
+            beta = Math.min(beta, board.getUtility());
+        }
+        return board;
+    }
 
+    /**
+     * returns the maximum child of the input board's children
+     *
+     * @param board
+     */
+    public static Board max(Board board, int alpha, int beta, int depth) {
+        if (depth == 0 || board.gameIsOver()) {
+            return board;
+        }
+        board.setUtility(Integer.MIN_VALUE);
+        List<Board> children = board.generateChildren();
+        for (Board child : children) {
+            Board min = min(child, alpha, beta, depth - 1);
+            if (min.getUtility() > board.getUtility()) {
+                board = min;
+            }
+            if (board.getUtility() >= beta) {
+                return board;
+            }
+            alpha = Math.max(alpha, board.getUtility());
+        }
+        return board;
     }
 
     public static Position getUserMove() {
@@ -60,7 +109,7 @@ public class Game {
             System.out.println(inputLetter);
             System.out.println(inputNum);
             int row = rowNumber(inputLetter);
-            int column = inputNum - 48 -1; //-1 more because we are zero indexed
+            int column = inputNum - 48 - 1; //-1 more because we are zero indexed
 
             System.out.println(row + " " + column);
             if (!isValidCoordinates(row, column)) {
