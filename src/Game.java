@@ -27,14 +27,14 @@ public class Game {
 
         if (response.equals("n")) {
             startedFirst = false;
-            Position userPosition = getUserMove();
+            Position userPosition = getUserMove(board);
             board.placeO(userPosition);
             System.out.println(board);
         } else if (response.equals("y")) {
             startedFirst = true;
             board.placeX(3, 3);
             System.out.println("Computer move: \n" + board);
-            board.placeO(getUserMove());
+            board.placeO(getUserMove(board));
             System.out.println(board);
         } else {
             throw new RuntimeException("Bad user input");
@@ -49,7 +49,7 @@ public class Game {
             if (board.gameIsOver()) {
                 break;
             }
-            board.placeO(getUserMove());
+            board.placeO(getUserMove(board));
             System.out.println(board);
 
         }
@@ -118,7 +118,7 @@ public class Game {
         return utility;
     }
 
-    public static Position getUserMove() {
+    public static Position getUserMove(Board board) {
         Position toReturn = null;
         while (toReturn == null) {
             System.out.print("Enter your move: ");
@@ -136,6 +136,10 @@ public class Game {
             System.out.println(row + " " + column);
             if (!isValidCoordinates(row, column)) {
                 System.out.println("Invalid coordinates");
+                continue;
+            }
+            if (!board.isEmpty(new Position(row, column))) {
+                System.out.println("Position not empty");
                 continue;
             }
             toReturn = new Position(row, column);

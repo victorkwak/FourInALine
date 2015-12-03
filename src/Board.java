@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * only allow even depth!!!
@@ -130,7 +129,7 @@ public class Board {
         return board[x][y] == null;
     }
 
-    private boolean isEmpty(Position position) {
+    public boolean isEmpty(Position position) {
         return isEmpty(position.getRow(), position.getColumn());
     }
 
