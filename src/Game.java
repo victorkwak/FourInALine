@@ -6,6 +6,8 @@ import java.util.Scanner;
  * O is player
  */
 public class Game {
+    private static long counter = 0;
+
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -18,7 +20,7 @@ public class Game {
 
         System.out.print("Is computer going first? (y/n) ");
         String response = scanner.nextLine().toLowerCase();
-        System.out.println();
+        System.out.println("Initial board: ");
         System.out.println(board);
 
 
@@ -26,13 +28,20 @@ public class Game {
             Position userPosition = getUserMove();
             board.placeO(userPosition);
             System.out.println(board);
-        } else if (!response.equals("y")) {
+        } else if (response.equals("y")) {
+            board.placeX(3, 3);
+            System.out.println("Computer move: \n" + board);
+            board.placeO(getUserMove());
+            System.out.println(board);
+        } else {
             throw new RuntimeException("Bad user input");
         }
 
 
+
         //computer move
         while (!board.gameIsOver()) {
+            counter = 0;
             board = minimax(board, Constants.DEPTH);
             System.out.println(board);
             if (board.gameIsOver()) {
@@ -79,6 +88,7 @@ public class Game {
             }
             alpha = Math.max(alpha, utility);
         }
+        System.out.println(++counter);
         return new IntBoard(resultBoard, utility);
     }
 
@@ -104,6 +114,7 @@ public class Game {
             }
             beta = Math.min(beta, utility);
         }
+        System.out.println(++counter);
         return utility;
     }
 
