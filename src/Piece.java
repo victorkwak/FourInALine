@@ -4,24 +4,11 @@
 public abstract class Piece {
     private Position position;
     private char side;
-    private RowLine rowLine;
-    private ColumnLine columnLine;
 
 
     public Piece(Position position, char side) {
         this.position = position;
         this.side = side;
-        this.rowLine = new RowLine(this.position);
-        this.columnLine = new ColumnLine(this.position);
-    }
-
-    public ColumnLine getColumnLine() {
-        return columnLine;
-    }
-
-
-    public RowLine getRowLine() {
-        return rowLine;
     }
 
 
@@ -37,16 +24,6 @@ public abstract class Piece {
         return this.getSide() == piece.getSide();
     }
 
-    public void mergeRow(Piece piece){
-        this.rowLine.merge(piece.rowLine);
-        piece.rowLine = this.rowLine;
-    }
-
-    public void mergeColumn(Piece piece){
-        this.columnLine.merge(piece.columnLine);
-        piece.columnLine = this.columnLine;
-
-    }
 
 
     @Override
@@ -54,11 +31,4 @@ public abstract class Piece {
         return String.valueOf(side);
     }
 
-    public void setRowLine(RowLine rowLine) {
-        this.rowLine = rowLine;
-    }
-
-    public void setColumnLine(ColumnLine columnLine) {
-        this.columnLine = columnLine;
-    }
 }

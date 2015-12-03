@@ -11,32 +11,33 @@ public class Board {
     private int utility;
     private List<Piece> pieces;
 
+    private RowLine[][] rowLines;
+    private ColumnLine[][] columnLines;
+
 
     public Board(int dimension) {
         this.dimension = dimension;
         board = new Piece[dimension][dimension];
         pieces = new ArrayList<>();
+        rowLines = new RowLine[dimension][dimension];
+        columnLines= new ColumnLine[dimension][dimension];
     }
 
 
-    private Board(Board board) {
+    public Board(Board board) {
         this.dimension = board.dimension;
-        this.lastPlacedPosition = board.lastPlacedPosition;
+        this.board = new Piece[this.dimension][this.dimension];
+        this.rowLines = new RowLine[dimension][dimension];
+        this.columnLines= new ColumnLine[dimension][dimension];
         this.pieces = new ArrayList<>(board.pieces);
-//        Set<RowLine> rowLines = new HashSet<>();
-//        Set<ColumnLine> columnLines = new HashSet<>();
-//        for (Piece[] pieceArray : board.board) {
-//            for (Piece piece : pieceArray) {
-//                if (piece != null) {
-//                    rowLines.add(piece.getRowLine());
-//                    columnLines.add(piece.getColumnLine());
-//                }
-//            }
-//        }
 
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[i].length; j++) {
+                place(board.board[i][j]);
+            }
+        }
 
-
-
+        this.lastPlacedPosition = board.lastPlacedPosition;
     }
 
     /**
@@ -48,12 +49,20 @@ public class Board {
      * @return
      */
     private boolean place(Piece piece) {
+        if (piece == null) {
+            return false;
+        }
         Position piecePosition = piece.getPosition();
         int row = piecePosition.getRow();
         int column = piecePosition.getColumn();
         if (isValidPosition(row, column) && isEmpty(row, column)) {
             board[row][column] = piece;
             pieces.add(piece);
+
+            rowLines[row][column] = new RowLine(new Position(row,column));
+            columnLines[row][column] = new ColumnLine(new Position(row,column));
+
+
             lastPlacedPosition = piecePosition;
             merge(piece);
             return true;
@@ -130,24 +139,47 @@ public class Board {
         Position piecePosition = piece.getPosition();
         Position left = immediateLeftPostion(piecePosition);
         if (isMergeable(piece, left)) {
-            piece.mergeRow(getPiece(left));
+            mergeRow(piece, getPiece(left));
         }
 
         Position right = immediateRightPostion(piecePosition);
         if (isMergeable(piece, right)) {
-            piece.mergeRow(getPiece(right));
+            mergeRow(piece, getPiece(right));
         }
 
         Position up = immediateUpPostion(piecePosition);
         if (isMergeable(piece, up)) {
-            piece.mergeColumn(getPiece(up));
+            mergeColumn(piece,getPiece(up));
         }
 
         Position down = immediateDownPostion(piecePosition);
         if (isMergeable(piece, down)) {
-            piece.mergeColumn(getPiece(down));
+            mergeColumn(piece,getPiece(down));
         }
     }
+
+    public void mergeRow(Piece firstPiece, Piece secondPiece) {
+        Position firstPosition = firstPiece.getPosition();
+        RowLine firstRowLine = rowLines[firstPosition.getRow()][firstPosition.getColumn()];
+
+        Position secondPosition= secondPiece.getPosition();
+        RowLine secondRowLine= rowLines[secondPosition.getRow()][secondPosition.getColumn()];
+
+        firstRowLine.merge(secondRowLine);
+        rowLines[secondPosition.getRow()][secondPosition.getColumn()] = firstRowLine;
+    }
+
+    public void mergeColumn(Piece firstPiece, Piece secondPiece) {
+        Position firstPosition = firstPiece.getPosition();
+        ColumnLine firstColumnLine = columnLines[firstPosition.getRow()][firstPosition.getColumn()];
+
+        Position secondPosition= secondPiece.getPosition();
+        ColumnLine secondColumnLine= columnLines[secondPosition.getRow()][secondPosition.getColumn()];
+
+        firstColumnLine.merge(secondColumnLine);
+        columnLines[secondPosition.getRow()][secondPosition.getColumn()] = firstColumnLine;
+    }
+
 
     public int getUtility() {
         return utility;
@@ -159,8 +191,10 @@ public class Board {
 
 
     public boolean gameIsOver() {
-        Piece piece = getPiece(lastPlacedPosition);
-        return piece.getRowLine().size() == 4 || piece.getColumnLine().size() == 4;
+        int row = lastPlacedPosition.getRow();
+        int column = lastPlacedPosition.getColumn();
+        return rowLines[row][column].size() == 4
+                || columnLines[row][column].size() == 4;
     }
 
     @Override
@@ -206,13 +240,15 @@ public class Board {
         Set<RowLine> oRows = new LinkedHashSet<>();
         Set<ColumnLine> xColumns = new LinkedHashSet<>();
         Set<ColumnLine> oColumns = new LinkedHashSet<>();
-        for (Piece[] pieceArray : board) {
-            for (Piece piece : pieceArray) {
+        for (int i = 0; i < board.length; i++) {
+            Piece[] pieceArray = board[i];
+            for (int j = 0; j < pieceArray.length; j++) {
+                Piece piece = pieceArray[j];
                 if (piece == null) {
                     continue;
                 }
-                RowLine currentRowLine = piece.getRowLine();
-                ColumnLine currentColumnLine = piece.getColumnLine();
+                RowLine currentRowLine = rowLines[i][j];
+                ColumnLine currentColumnLine = columnLines[i][j];
                 if (piece.getSide() == Constants.OChar) {
                     oRows.add(currentRowLine);
                     oColumns.add(currentColumnLine);

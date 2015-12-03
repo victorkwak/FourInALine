@@ -30,10 +30,17 @@ public class Game {
             throw new RuntimeException("Bad user input");
         }
 
+        Board board1 = new Board(board);
+        System.out.println("THIS IS BOARD 1: ");
+        System.out.println(board1);
+
         //computer move
         while (!board.gameIsOver()) {
             board.placeO(getUserMove());
             System.out.println(board);
+
+            System.out.println("THIS IS BOARD 1: ");
+            System.out.println(board1);
         }
         System.out.println("game over");
     }
@@ -45,6 +52,7 @@ public class Game {
     }
 
     //TODO make sure false and true is correct
+
     /**
      * returns the minimum child of the input board's children
      *
@@ -72,7 +80,8 @@ public class Game {
 
     /**
      * returns the maximum child of the input board's children
-     *  when this method is called, it is the ai's turn to move
+     * when this method is called, it is the ai's turn to move
+     *
      * @param board
      */
     public static Board max(Board board, int alpha, int beta, int depth) {
