@@ -3,6 +3,6 @@
  */
 public class OPiece extends Piece{
     public OPiece(Position position) {
-        super(position, 'O');
+        super(position, Constants.OChar);
     }
 }

@@ -15,6 +15,12 @@ public class ColumnLine {
         lowerEnd = initialPosition;
     }
 
+    public ColumnLine(ColumnLine columnLine) {
+        this.includedPositions = new LinkedList<>(columnLine.includedPositions);
+        this.upperEnd = columnLine.upperEnd;
+        this.lowerEnd = columnLine.lowerEnd;
+    }
+
     /**
      * should only add continguous positions!!!!!!
      * @param position
@@ -49,7 +55,19 @@ public class ColumnLine {
         }
     }
 
+    public Position getLowerEnd() {
+        return lowerEnd;
+    }
+
+    public Position getUpperEnd() {
+        return upperEnd;
+    }
+
     public int size() {
         return this.includedPositions.size();
+    }
+
+    public List<Position> getIncludedPositions() {
+        return includedPositions;
     }
 }

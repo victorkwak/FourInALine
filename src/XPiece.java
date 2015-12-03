@@ -4,6 +4,6 @@
 public class XPiece extends Piece{
 
     public XPiece(Position position) {
-        super(position, 'X');
+        super(position, Constants.XChar);
     }
 }

@@ -3,4 +3,6 @@
  */
 public class Constants {
     public static final int BOARD_DIMENSION = 8;
+    public static final char XChar = 'X';
+    public static final char OChar = 'O';
 }

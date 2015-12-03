@@ -53,4 +53,12 @@ public abstract class Piece {
     public String toString() {
         return String.valueOf(side);
     }
+
+    public void setRowLine(RowLine rowLine) {
+        this.rowLine = rowLine;
+    }
+
+    public void setColumnLine(ColumnLine columnLine) {
+        this.columnLine = columnLine;
+    }
 }
