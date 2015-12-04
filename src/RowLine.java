@@ -16,15 +16,6 @@ public class RowLine {
         rightEnd = initialPosition;
     }
 
-    /**
-     * will only make a new linkedlist from same positions of old object
-     */
-    public RowLine(RowLine rowLine) {
-        this.includedPositions = new LinkedList<>(includedPositions);
-        this.leftEnd = rowLine.leftEnd;
-        this.rightEnd = rowLine.rightEnd;
-    }
-
     public void add(Position position){
         includedPositions.add(position);
         if (position.getColumn() == rightEnd.getColumn() +1) {

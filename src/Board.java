@@ -49,7 +49,6 @@ public class Board {
     private boolean place(Piece piece) {
         if (piece == null) {
             throw new RuntimeException("Adding a null piece!");
-//            return false;
         }
         Position piecePosition = piece.getPosition();
         int row = piecePosition.getRow();
@@ -57,16 +56,11 @@ public class Board {
         if (isValidPosition(row, column) && isEmpty(row, column)) {
             board[row][column] = piece;
 
-//            rowLines[row][column] = new RowLine(new Position(row, column));
-//            columnLines[row][column] = new ColumnLine(new Position(row, column));
-
             lastPlacedPosition = piecePosition;
             merge(piece);
             return true;
-        } else {
-            throw new RuntimeException("didn't work wtf");
-//            return false;
         }
+        return false;
     }
 
 
@@ -416,9 +410,6 @@ public class Board {
                             || (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
                         xScore += startedFirst ? Constants.HIGH : Constants.MID;
-                    } else {
-                        //we have a blocked 3
-                        //no points
                     }
                 } else if (rowLine.size() == 2) {
                     Position left = immediateLeftPostion(rowLine.getLeftEnd());
@@ -832,10 +823,7 @@ public class Board {
                         oScore += Constants.HIGH;
                     }
 
-                } else { //rowline.size is 1
-
                 }
-
             }
         }
         return xScore - oScore;

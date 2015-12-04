@@ -12,12 +12,6 @@ public class Game {
 
     public static void main(String[] args) {
         Board board = new Board(Constants.BOARD_DIMENSION);
-//        int secondsAllowedForAIMove;
-//
-//
-//        System.out.print("How many seconds is the AI allowed to have per move? ");
-//        secondsAllowedForAIMove = Integer.parseInt(scanner.nextLine());
-
         System.out.print("Is computer going first? (y/n) ");
         String response = scanner.nextLine().toLowerCase();
 
@@ -51,8 +45,6 @@ public class Game {
         } else {
             throw new RuntimeException("Bad user input");
         }
-
-
 
         //computer move
         while (!board.gameIsOver()) {
