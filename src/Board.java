@@ -85,14 +85,6 @@ public class Board {
         return board[position.getRow()][position.getColumn()];
     }
 
-    public boolean placeX(int x, int y) {
-        return place(new XPiece(new Position(x, y)));
-    }
-
-    public boolean placeO(int x, int y) {
-        return place(new OPiece(new Position(x, y)));
-    }
-
     public boolean placeX(Position position) {
         return place(new XPiece(position));
     }
@@ -193,28 +185,16 @@ public class Board {
 
     }
 
-    public void mergeRow(Piece firstPiece, Piece secondPiece) {
-        Position firstPosition = firstPiece.getPosition();
-        RowLine firstRowLine = rowLines[firstPosition.getRow()][firstPosition.getColumn()];
-
-        Position secondPosition = secondPiece.getPosition();
-        RowLine secondRowLine = rowLines[secondPosition.getRow()][secondPosition.getColumn()];
-
-        firstRowLine.merge(secondRowLine);
-        rowLines[secondPosition.getRow()][secondPosition.getColumn()] = firstRowLine;
+    public void diff(Board child) {
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[i].length; j++) {
+                if (isEmpty(i, j) && !child.isEmpty(i, j)) {
+                    System.out.print("Computer's move: ");
+                    System.out.println(child.board[i][j].getPosition() + "\n");
+                }
+            }
+        }
     }
-
-    public void mergeColumn(Piece firstPiece, Piece secondPiece) {
-        Position firstPosition = firstPiece.getPosition();
-        ColumnLine firstColumnLine = columnLines[firstPosition.getRow()][firstPosition.getColumn()];
-
-        Position secondPosition = secondPiece.getPosition();
-        ColumnLine secondColumnLine = columnLines[secondPosition.getRow()][secondPosition.getColumn()];
-
-        firstColumnLine.merge(secondColumnLine);
-        columnLines[secondPosition.getRow()][secondPosition.getColumn()] = firstColumnLine;
-    }
-
 
     public int getUtility() {
         return utility;
@@ -231,8 +211,8 @@ public class Board {
         return rowLines[row][column].size() >= 4
                 || columnLines[row][column].size() >= 4;
     }
-
     @Override
+
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("   ");

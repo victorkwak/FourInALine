@@ -25,21 +25,23 @@ public class Game {
         System.out.println(board);
 
 
-        if (response.equals("n")) {
+        if (response.equals("n")) { //User starts first
             startedFirst = false;
             Position userPosition = getUserMove(board);
             board.placeO(userPosition);
             System.out.println(board);
-        } else if (response.equals("y")) {
+        } else if (response.equals("y")) { //Computer starts first
             startedFirst = true;
             Position[] initialPositions = new Position[3];
             Position[] initUserMoves = new Position[2];
             initialPositions[0] = new Position(3, 3);
             for (int i = 0; i < 2; i++) {
                 board.placeX(initialPositions[i]);
+                board.diff(new Board(Constants.BOARD_DIMENSION));
                 System.out.println("Computer move: \n" + board);
                 initUserMoves[i] = getUserMove(board);
                 board.placeO(initUserMoves[i]);
+                System.out.println(initUserMoves[i]);
                 System.out.println(board);
                 if (initUserMoves[0].getRow() != 3) {
                     initialPositions[i + 1] = new Position(3, 4);
@@ -54,8 +56,9 @@ public class Game {
 
         //computer move
         while (!board.gameIsOver()) {
-            board = minimax(board, Constants.DEPTH);
-            System.out.println(board);
+            Board minimax = minimax(board, Constants.DEPTH);
+            board.diff(minimax);
+            System.out.println(minimax);
             if (board.gameIsOver()) {
                 break;
             }
@@ -94,7 +97,6 @@ public class Game {
                 utility = minResult;
                 resultBoard = child;
             }
-//            utility = Math.max(utility, minResult);
             if (utility >= beta) {
                 return new IntBoard(child, utility);
             }

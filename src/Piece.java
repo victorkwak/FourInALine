@@ -29,6 +29,18 @@ public abstract class Piece {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Piece piece = (Piece) o;
+
+        if (side != piece.side) return false;
+        return !(position != null ? !position.equals(piece.position) : piece.position != null);
+
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(side);
     }
