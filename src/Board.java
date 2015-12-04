@@ -415,7 +415,7 @@ public class Board {
                     } else if ((isValidPosition(left) && isEmpty(left))
                             || (isValidPosition(right) && isEmpty(right))) {
                         //if we have an open 3
-                        xScore += Constants.MID;
+                        xScore += startedFirst ? Constants.HIGH : Constants.MID;
                     } else {
                         //we have a blocked 3
                         //no points
@@ -430,28 +430,28 @@ public class Board {
                     if ((isValidPosition(left) && isEmpty(left)) &&
                             (isValidPosition(leftLeft) && isEmpty(leftLeft)) &&
                             (isValidPosition(right) && isEmpty(right))) {
-                        xScore += Constants.MID;
+                        xScore += startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                     //two on the right, one on the left
                     if ((isValidPosition(left) && isEmpty(left)) &&
                             (isValidPosition(right) && isEmpty(right)) &&
                             (isValidPosition(rightRight) && isEmpty(rightRight))) {
-                        xScore += Constants.MID;
+                        xScore += startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(right) && isEmpty(right)) &&
                             isValidPosition(rightRight) && !isEmpty(rightRight) &&
                             getPiece(rightRight).getSide() == Constants.XChar) {
-                        xScore += Constants.MID;
+                        xScore += startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                     //jump in the middle
                     if ((isValidPosition(left) && isEmpty(left)) &&
                             isValidPosition(leftLeft) && !isEmpty(leftLeft) &&
                             getPiece(leftLeft).getSide() == Constants.XChar) {
-                        xScore += Constants.MID;
+                        xScore += startedFirst ? Constants.HIGH : Constants.MID;
                     }
 
                 } else {
