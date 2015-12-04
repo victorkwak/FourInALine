@@ -36,57 +36,86 @@ public class Board {
 
         List<Threat> allThreats = new ArrayList<>();
 
+        Threat toReturn = null;
         for (RowLine rowLine : allUniqueRowLines) {
             if (rowLine.size() == 3) {
-                //TODO consider a space??? "jump"
-                Position left = immediateLeftPostion(rowLine.getLeftEnd());
-                Position right = immediateRightPostion(rowLine.getRightEnd());
-                Position leftLeft = immediateLeftPostion(left);
-                Position rightRight = immediateRightPostion(right);
-
-                if (isValidPosition(left) && isEmpty(left)) {
-                    Position gainSquare = left;
-                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
-                    return new Threat(gainSquare, restSquares, null);
-                }
-                if (isValidPosition(right) && isEmpty(right)) {
-                    Position gainSquare = right;
-                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
-                    return new Threat(gainSquare, restSquares, null);
-                }
+                return threeTogetherThreat(rowLine);
                 //otherwise you are blocked on both sides
 
             } else if (rowLine.size() == 2) {
-                Position left = immediateLeftPostion(rowLine.getLeftEnd());
-                Position right = immediateRightPostion(rowLine.getRightEnd());
-                Position leftLeft = immediateLeftPostion(left);
-                Position rightRight = immediateRightPostion(right);
-                //Separated 3
-                if (isValidPosition(left) && isEmpty(left) && isValidPosition(leftLeft) && isEmpty(leftLeft)) {
-                    Position gainSquare = left;
-                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
-                    return new Threat(gainSquare, restSquares, null);
-                }
-                //Separated 3
-                if (isValidPosition(right) && isEmpty(right) && isValidPosition(rightRight) && isEmpty(rightRight)) {
-                    Position gainSquare = right;
-                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
-                    return new Threat(gainSquare, restSquares, null);
+                toReturn = separatedThreeThreat(rowLine);
+                if (toReturn != null) {
+                    return toReturn;
                 }
 
-                if (isValidPosition(left) && isEmpty(left) && isValidPosition(right) && isEmpty(right)) {
-                    Position gainSquare = left;
-                    List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+                //Two together
 
-                }
 
             }
 
 
 
         }
-
+        return toReturn;
     }
+
+    public Threat threeTogetherThreat(RowLine rowLine) {
+        Position left = immediateLeftPostion(rowLine.getLeftEnd());
+        Position right = immediateRightPostion(rowLine.getRightEnd());
+
+        if (isValidPosition(left) && isEmpty(left)) {
+            Position gainSquare = left;
+            List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+            return new Threat(gainSquare, restSquares, null);
+        }
+        if (isValidPosition(right) && isEmpty(right)) {
+            Position gainSquare = right;
+            List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+            return new Threat(gainSquare, restSquares, null);
+        }
+        return null;
+    }
+
+    public Threat separatedThreeThreat(RowLine rowLine) {
+        Position left = immediateLeftPostion(rowLine.getLeftEnd());
+        Position right = immediateRightPostion(rowLine.getRightEnd());
+        Position leftLeft = immediateLeftPostion(left);
+        Position rightRight = immediateRightPostion(right);
+
+        if (isValidPosition(left) && isEmpty(left) && isValidPosition(leftLeft) && isEmpty(leftLeft)) {
+            Position gainSquare = left;
+            List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+            return new Threat(gainSquare, restSquares, null);
+        }
+        //Separated 3
+        if (isValidPosition(right) && isEmpty(right) && isValidPosition(rightRight) && isEmpty(rightRight)) {
+            Position gainSquare = right;
+            List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+            return new Threat(gainSquare, restSquares, null);
+        }
+        return null;
+    }
+
+    public Threat twoTogetherThreat(RowLine rowLine) {
+        Position left = immediateLeftPostion(rowLine.getLeftEnd());
+        Position right = immediateRightPostion(rowLine.getRightEnd());
+        Position leftLeft = immediateLeftPostion(left);
+        Position rightRight = immediateRightPostion(right);
+
+        if (isValidPosition(left) && isEmpty(left) && isValidPosition(right) && isEmpty(right)) {
+            Position gainSquare = left;
+            List<Position> restSquares = new ArrayList<>(rowLine.getIncludedPositions());
+            List<Position> costSquare = new ArrayList<>();
+            costSquare.add(right);
+            Threat toReturn = new Threat(gainSquare, restSquares, costSquare);
+            if ( != null) {
+                return toReturn;
+            }
+        }
+
+        return null;
+    }
+
 
 
     public Board(Board board) {
