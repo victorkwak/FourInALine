@@ -190,7 +190,9 @@ public class Board {
             for (int j = 0; j < this.board[i].length; j++) {
                 if (isEmpty(i, j) && !child.isEmpty(i, j)) {
                     System.out.print("Computer's move: ");
-                    System.out.println(child.board[i][j].getPosition() + "\n");
+                    int row = child.board[i][j].getPosition().getRow();
+                    int column = child.board[i][j].getPosition().getColumn();
+                    System.out.println((char)(row+97) + ""+ (column +1)+"\n");
                 }
             }
         }
