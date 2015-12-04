@@ -2,7 +2,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by Victor Kwak on 12/1/15.
+ * Artificial Intelligence Alph-Beta Pruning
+ * December 3, 2015
+ *
+ * Brian Zhao
+ * Victor kwak
  */
 public class ColumnLine {
     private List<Position> includedPositions = new LinkedList<>();

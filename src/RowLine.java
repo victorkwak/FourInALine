@@ -1,24 +1,27 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by Victor Kwak on 12/1/15.
+ * Artificial Intelligence Alph-Beta Pruning
+ * December 3, 2015
+ *
+ * Brian Zhao
+ * Victor kwak
  */
 public class RowLine {
     private List<Position> includedPositions = new LinkedList<>();
     private Position leftEnd;
     private Position rightEnd;
 
-    public RowLine(Position initialPosition){
+    public RowLine(Position initialPosition) {
         includedPositions.add(initialPosition);
         leftEnd = initialPosition;
         rightEnd = initialPosition;
     }
 
-    public void add(Position position){
+    public void add(Position position) {
         includedPositions.add(position);
-        if (position.getColumn() == rightEnd.getColumn() +1) {
+        if (position.getColumn() == rightEnd.getColumn() + 1) {
             rightEnd = position;
         } else if (position.getColumn() == leftEnd.getColumn() - 1) {
             leftEnd = position;
@@ -28,7 +31,7 @@ public class RowLine {
     }
 
 
-    public void merge(RowLine rowLine){
+    public void merge(RowLine rowLine) {
         if (rowLine.rightEnd.getRow() != this.rightEnd.getRow()) {
             throw new RuntimeException("Wrong merge!!!!!!!");
         }
@@ -38,8 +41,8 @@ public class RowLine {
 
 
         this.includedPositions.addAll(rowLine.includedPositions);
-        if (leftEnd.getColumn() == rowLine.rightEnd.getColumn()+1) {
-            leftEnd= rowLine.leftEnd;
+        if (leftEnd.getColumn() == rowLine.rightEnd.getColumn() + 1) {
+            leftEnd = rowLine.leftEnd;
         } else if (rightEnd.getColumn() == rowLine.leftEnd.getColumn() - 1) {
             rightEnd = rowLine.rightEnd;
         } else {

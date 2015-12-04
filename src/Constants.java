@@ -1,5 +1,9 @@
 /**
- * Created by brianzhao on 12/1/15.
+ * Artificial Intelligence Alph-Beta Pruning
+ * December 3, 2015
+ *
+ * Brian Zhao
+ * Victor kwak
  */
 public class Constants {
     public static final int BOARD_DIMENSION = 8;

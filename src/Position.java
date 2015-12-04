@@ -1,5 +1,9 @@
 /**
- * Created by brianzhao on 12/2/15.
+ * Artificial Intelligence Alph-Beta Pruning
+ * December 3, 2015
+ *
+ * Brian Zhao
+ * Victor kwak
  */
 public class Position {
     private int x;

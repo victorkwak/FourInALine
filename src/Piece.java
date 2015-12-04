@@ -1,5 +1,9 @@
 /**
- * Created by Victor Kwak on 11/30/15.
+ * Artificial Intelligence Alph-Beta Pruning
+ * December 3, 2015
+ *
+ * Brian Zhao
+ * Victor kwak
  */
 public abstract class Piece {
     private Position position;

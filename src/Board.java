@@ -1,7 +1,13 @@
 import java.util.*;
 
 /**
- * only allow even depth!!!
+ * Only accepts even depth
+ *
+ * Artificial Intelligence Alph-Beta Pruning
+ * December 3, 2015
+ *
+ * Brian Zhao
+ * Victor kwak
  */
 public class Board {
     private Piece[][] board;
